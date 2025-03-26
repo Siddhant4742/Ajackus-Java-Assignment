@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Library Management</title>
+    <style>
+        :root {
+            --primary-bg: #e6f2ff;
+            --secondary-bg: #f0f8ff;
+            --soft-blue: #b0e0e6;
+            --calm-blue: #87ceeb;
+            --deep-sky-blue: #00bfff;
+            --text-color: #2c3e50;
+            --border-color: #b0d4f5;
+            
+            /* New color palette */
+            --add-btn-color: #2ecc71;
+            --update-btn-color: #f39c12;
+            --search-btn-color: #3498db;
+            --delete-btn-color: #e74c3c;
+            
+            --available-color: #2ecc71;
+            --unavailable-color: #e74c3c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: center;
+            background-color: var(--calm-blue);
+            padding: 15px;
+            gap: 20px;
+        }
+
+        .nav-button {
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #add-book-btn {
+            background-color: var(--add-btn-color);
+        }
+
+        #update-book-btn {
+            background-color: var(--update-btn-color);
+        }
+
+        #search-book-btn {
+            background-color: var(--search-btn-color);
+        }
+
+        #delete-book-btn {
+            background-color: var(--delete-btn-color);
+        }
+
+        .nav-button:hover {
+            opacity: 0.9;
+            transform: translateY(-3px);
+        }
+
+        .content {
+            display: flex;
+            height: calc(100vh - 70px);
+        }
+
+        .book-inventory {
+            flex: 1;
+            background-color: white;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: #000;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--deep-sky-blue);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--soft-blue);
+        }
+
+        .error-message {
+            color: var(--unavailable-color);
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <button class="nav-button" id="add-book-btn">➕ Add Book</button>
+        <button class="nav-button" id="update-book-btn">✏️ Update Book</button>
+        <button class="nav-button" id="search-book-btn">🔍 Search Book</button>
+        <button class="nav-button" id="delete-book-btn">🗑️ Delete Book</button>
+    </div>
+
+    <div class="content">
+        <div class="book-inventory" id="book-inventory">
+            <h2>Book Inventory</h2>
+            <div id="books-table"></div>
+        </div>
+    </div>
+
+    <!-- Modals remain the same as in the previous implementation -->
+    <!-- Add Book Modal -->
+    <div id="add-book-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Book</h2>
+                <span class="close-btn" data-modal="add-book-modal">&times;</span>
+            </div>
+            <form id="add-book-form">
+                <input type="number" id="bookId" placeholder="Book ID" required>
+                <input type="text" id="bookTitle" placeholder="Title" required>
+                <input type="text" id="bookAuthor" placeholder="Author" required>
+                <input type="text" id="bookGenre" placeholder="Genre">
+                <select id="bookStatus">
+                    <option value="Available">Available</option>
+                    <option value="Checked Out">Checked Out</option>
+                </select>
+                <button type="submit" class="submit-btn">Add Book</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Update Book Modal -->
+    <div id="update-book-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Update Book</h2>
+                <span class="close-btn" data-modal="update-book-modal">&times;</span>
+            </div>
+            <form id="update-book-form">
+                <input type="number" id="updateId" placeholder="Book ID" required>
+                <input type="text" id="updateTitle" placeholder="New Title">
+                <input type="text" id="updateAuthor" placeholder="New Author">
+                <input type="text" id="updateGenre" placeholder="New Genre">
+                <select id="updateStatus">
+                    <option value="">Select Status</option>
+                    <option value="Available">Available</option>
+                    <option value="Checked Out">Checked Out</option>
+                </select>
+                <button type="submit" class="submit-btn">Update Book</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Search Book Modal -->
+    <div id="search-book-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Search Books</h2>
+                <span class="close-btn" data-modal="search-book-modal">&times;</span>
+            </div>
+            <input type="text" id="searchTitle" placeholder="Search by Title">
+            <button id="searchTitleBtn" class="submit-btn">Search by Title</button>
+            <input type="number" id="searchId" placeholder="Search by ID">
+            <button id="searchIdBtn" class="submit-btn">Search by ID</button>
+        </div>
+    </div>
+
+    <!-- Delete Book Modal -->
+    <div id="delete-book-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Delete Book</h2>
+                <span class="close-btn" data-modal="delete-book-modal">&times;</span>
+            </div>
+            <form id="delete-book-form">
+                <input type="number" id="deleteId" placeholder="Book ID" required>
+                <button type="submit" class="submit-btn">Delete Book</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const baseUrl = "http://65.2.122.102:5000";
+
+        // Modal functionality
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Event listeners for modal open/close
+        document.querySelectorAll('.nav-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const modalId = button.id.replace('-btn', '-modal');
+                openModal(modalId);
+            });
+        });
+
+        document.querySelectorAll('.close-btn').forEach(closeBtn => {
+            closeBtn.addEventListener('click', () => {
+                const modalId = closeBtn.getAttribute('data-modal');
+                closeModal(modalId);
+            });
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (event) => {
+            document.querySelectorAll('.modal').forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+
+        function displayBooks(books) {
+            const container = document.getElementById("books-table");
+            
+            if (!books || !Array.isArray(books)) {
+                container.innerHTML = `
+                    <div class="error-message">
+                        ❌ No valid book data found. Please try again.
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = books.length ? 
+                `<table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Genre</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>` +
+                books.map(book => `
+                    <tr>
+                        <td>${book.id}</td>
+                        <td>${book.title}</td>
+                        <td>${book.author}</td>
+                        <td>${book.genre}</td>
+                        <td style="color: ${book.availabilityStatus === 'Available' ? 'var(--available-color)' : 'var(--unavailable-color)'}">
+                            ${book.availabilityStatus === 'Available' ? '✅ Available' : '❌ Checked Out'}
+                        </td>
+                    </tr>`).join('') +
+                `</tbody></table>` : `
+                <div class="error-message">
+                    📚 No books found. Try adding some books!
+                </div>`;
+        }
+
+        // Add Book
+        document.getElementById("add-book-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            try {
+                const book = {
+                    id: parseInt(document.getElementById("bookId").value),
+                    title: document.getElementById("bookTitle").value,
+                    author: document.getElementById("bookAuthor").value,
+                    genre: document.getElementById("bookGenre").value,
+                    availabilityStatus: document.getElementById("bookStatus").value
+                };
+                const response = await fetch(`${baseUrl}/books`, { 
+                    method: "POST", 
+                    headers: { "Content-Type": "application/json" }, 
+                    body: JSON.stringify(book) 
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to add book');
+                }
+
+                closeModal('add-book-modal');
+                loadBooks();
+                alert('📚 Book added successfully!');
+            } catch (error) {
+                alert(`❌ Error: ${error.message}`);
+            }
+        });
+
+        // Update Book
+    document.getElementById("update-book-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        try {
+            const id = document.getElementById("updateId").value;
+            
+            // Fetch the current book data
+            const fetchResponse = await fetch(`${baseUrl}/books/${id}`);
+            if (!fetchResponse.ok) {
+                throw new Error('Book not found');
+            }
+            const currentBook = await fetchResponse.json();
+
+            // Use new values if provided, otherwise fall back to current values
+            const updatedBook = {
+                title: document.getElementById("updateTitle").value.trim() || currentBook.title,
+                author: document.getElementById("updateAuthor").value.trim() || currentBook.author,
+                genre: document.getElementById("updateGenre").value.trim() || currentBook.genre,
+                availabilityStatus: document.getElementById("updateStatus").value || currentBook.availabilityStatus
+            };
+
+            // Send updated data to the server
+            const response = await fetch(`${baseUrl}/books/${id}`, { 
+                method: "PUT", 
+                headers: { "Content-Type": "application/json" }, 
+                body: JSON.stringify(updatedBook) 
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update book');
+            }
+
+            closeModal('update-book-modal');
+            loadBooks();
+            alert('✏️ Book updated successfully!');
+        } catch (error) {
+            alert(`❌ Error: ${error.message}`);
+        }
+    });
+
+        // Search by Title
+        document.getElementById("searchTitleBtn").addEventListener("click", async () => {
+            try {
+                const title = document.getElementById("searchTitle").value;
+                const response = await fetch(`${baseUrl}/books/search?title=${encodeURIComponent(title)}`);
+                const books = await response.json();
+                displayBooks(books);
+                closeModal('search-book-modal');
+            } catch (error) {
+                alert(`❌ Error searching books: ${error.message}`);
+            }
+        });
+
+        // Search by ID
+        document.getElementById("searchIdBtn").addEventListener("click", async () => {
+            try {
+                const id = document.getElementById("searchId").value;
+                const response = await fetch(`${baseUrl}/books/${id}`);
+                const book = await response.json();
+                displayBooks([book]);
+                closeModal('search-book-modal');
+            } catch (error) {
+                alert(`❌ Error searching book: ${error.message}`);
+            }
+        });
+
+        // Delete Book
+        document.getElementById("delete-book-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            try {
+                const id = document.getElementById("deleteId").value;
+                const response = await fetch(`${baseUrl}/books/${id}`, { method: "DELETE" });
+
+                if (!response.ok) {
+                    throw new Error('Failed to delete book');
+                }
+
+                closeModal('delete-book-modal');
+                loadBooks();
+                alert('🗑️ Book deleted successfully!');
+            } catch (error) {
+                alert(`❌ Error: ${error.message}`);
+            }
+        });
+
+        // Load Books
+        async function loadBooks() {
+            try {
+                const response = await fetch(`${baseUrl}/books`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const books = await response.json();
+                displayBooks(books);
+            } catch (error) {
+                const container = document.getElementById("books-table");
+                container.innerHTML = `
+                    <div class="error-message">
+                        ❌ Error loading books: ${error.message}
+                        <br>Please check your network connection or server status.
+                    </div>
+                `;
+            }
+        }
+
+        // Initial load
+        window.onload = loadBooks;
+    </script>
+</body>
+</html>
