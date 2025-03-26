@@ -1,3 +1,5 @@
+package model;
+
 public class Book {
     private int id;
     private String title;
@@ -5,7 +7,7 @@ public class Book {
     private String genre;
     private String availabilityStatus;
 
-    // Constructor
+    // Constructors
     public Book() {}
 
     public Book(int id, String title, String author, String genre, String availabilityStatus) {
@@ -16,7 +18,7 @@ public class Book {
         this.availabilityStatus = availabilityStatus;
     }
 
-    // Getters and setters (unchanged from previous implementation)
+    // Getters and setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public String getTitle() { return title; }

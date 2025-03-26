@@ -1,7 +1,12 @@
+package server;
+
 import static spark.Spark.*;
 import com.google.gson.Gson;
-import java.sql.*;
-import java.util.ArrayList;
+import model.Book;
+import repository.BookRepository;
+import database.DatabaseManager;
+
+import java.sql.SQLException;
 import java.util.List;
 
 public class LibraryServer {
@@ -24,6 +29,7 @@ public class LibraryServer {
         Gson gson = new Gson();
         BookRepository bookRepository = new BookRepository();
 
+        // REST API Endpoints (same as previous implementation)
         // 1. Add a new book (POST /books)
         post("/books", (req, res) -> {
             res.type("application/json");
@@ -37,7 +43,6 @@ public class LibraryServer {
                 return gson.toJson("Error adding book: " + ex.getMessage());
             }
         });
-
         // 2. View all books (GET /books)
         get("/books", (req, res) -> {
             res.type("application/json");
@@ -118,6 +123,9 @@ public class LibraryServer {
                 return gson.toJson("Error deleting book: " + ex.getMessage());
             }
         });
+
+        // Remaining endpoints (GET, PUT, DELETE) remain the same
+        // ... (keep the implementation from the previous artifact)
 
         System.out.println("Library server is running on port 5000");
     }

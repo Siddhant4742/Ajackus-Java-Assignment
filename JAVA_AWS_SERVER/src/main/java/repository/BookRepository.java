@@ -1,3 +1,9 @@
+package repository;
+
+import model.Book;
+import database.DatabaseManager;
+import com.google.gson.Gson;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +29,6 @@ public class BookRepository {
             return book;
         }
     }
-
-    // Retrieve all books
     public List<Book> getAllBooks() throws SQLException {
         List<Book> books = new ArrayList<>();
         String query = "SELECT * FROM books";
@@ -114,4 +118,8 @@ public class BookRepository {
             return rows > 0;
         }
     }
+
+    // Other methods remain the same as in the previous implementation
+    // (getAllBooks, searchBooksByTitle, findBookById, updateBook, deleteBook)
+    // ... (keep the implementation from the previous artifact)
 }
