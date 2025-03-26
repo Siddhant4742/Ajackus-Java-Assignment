@@ -6,7 +6,7 @@ public class LibrarySystemJDBC {
     // Database connection details (update these values as necessary)
     private static final String URL = "jdbc:mysql://localhost:3306/bookstore";
     private static final String USER = "root";
-    private static final String PASSWORD = "Santa@4742";
+    private static final String PASSWORD = "your_password";
 
     // Obtain a connection
     static Connection getConnection() throws SQLException {
