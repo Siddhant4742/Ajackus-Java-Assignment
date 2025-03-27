@@ -16,6 +16,7 @@ This project implements a Digital Library Management System that provides RESTfu
 - [API Endpoints](#api-endpoints)
 - [Testing](#testing)
 - [Deployment](#deployment)
+- [Challenges faced](#challenges-faced)
 - [Future Improvements](#future-improvements)
 
 
