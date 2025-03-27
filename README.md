@@ -16,6 +16,7 @@ This project implements a Digital Library Management System that provides RESTfu
 - [API Endpoints](#api-endpoints)
 - [Testing](#testing)
 - [Deployment](#deployment)
+- [Future Improvements](#future-improvements)
 
 
 ## Overview
@@ -131,4 +132,23 @@ yum install apache2 -y
 sudo systemctl start httpd
 sudo systemctl enable httpd 
 ```
+
+## Future Improvements
+
+If I had more time, I would have implemented the following improvements to enhance the system:
+
+### 1. Cloud Database Integration  
+Currently, the system uses a local MySQL database. Moving to a cloud-based database service like **AWS RDS**, **Google Cloud SQL**, or **Firebase Firestore** would offer better scalability, reliability, and automated backups. This would ensure high availability and reduce maintenance efforts.
+
+### 2. Java-Based Test Cases (JUnit)  
+Right now, I have written test cases using **Python (pytest)**, but since the project is in Java, it would be more appropriate to use **JUnit** for unit testing and **RestAssured** for API testing. This would ensure better integration with the Java ecosystem and allow for automated testing within a CI/CD pipeline.
+
+### 3. User Authentication & Authorization  
+Currently, there is no user authentication mechanism. I would implement **JWT-based authentication** to manage user sessions securely. Additionally, **role-based access control (RBAC)** could be introduced to restrict certain actions based on user roles (e.g., Admin, Librarian, Member).
+
+### 4. Mobile App Support  
+To enhance accessibility, I would develop a **Flutter-based mobile app** that allows users to search for books, check availability, and manage their library interactions on the go. This would improve the overall user experience and make the system more versatile.
+
+These enhancements would significantly improve the project by making it more secure, scalable, and user-friendly.
+
 
