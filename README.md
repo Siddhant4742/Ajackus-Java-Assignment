@@ -133,6 +133,24 @@ yum install apache2 -y
 sudo systemctl start httpd
 sudo systemctl enable httpd 
 ```
+## Challenges Faced
+
+During the development of the **Digital Library Management System**, several challenges were encountered:
+
+1. **Spark Framework Dependencies & Jetty Server Issues**  
+   - Setting up **Spark Java** with **Jetty Server** required managing multiple dependencies manually. Compatibility issues arose while integrating different versions of `spark-core`, `jetty-server`, and `javax.servlet-api`. Resolving these dependency conflicts and ensuring the correct execution order was time-consuming.  
+
+2. **Switching from JUnit to PyTest for Testing**  
+   - Initially, I intended to write test cases using **JUnit** in Java. However, due to my limited experience with JUnit and time constraints, I switched to **PyTest** for faster and more efficient test case writing. While this improved test coverage in the short term, integrating Python tests with a Java project was not ideal.  
+
+3. **Database Management**  
+   - A local MySQL database was used, which made scalability difficult. Managing connections and ensuring data consistency required additional effort. A cloud-based solution would have simplified database handling.  
+
+4. **Deployment Issues**  
+   - Setting up the AWS EC2 server and configuring **httpd** for hosting the web frontend required troubleshooting various network and permission-related issues. Ensuring the backend API was correctly accessible also required adjusting firewall settings.  
+
+5. **Limited Time for Additional Features**  
+   - Features like user authentication, cloud-based database support, and mobile app integration had to be postponed due to time constraints.  
 
 ## Future Improvements
 
